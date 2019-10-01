@@ -38,6 +38,7 @@ class UsersController < ApplicationController
       end
       @numusrgroups = currusergroups.count
     end
+    @events = Event.where( "start_at > ?", Time.now - 10.hours ).order('start_at ASC').paginate(page: params[:page], :per_page => 2)
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @user }
