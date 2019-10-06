@@ -38,7 +38,16 @@ class UsersController < ApplicationController
       end
       @numusrgroups = currusergroups.count
     end
-    @events = Event.where( "start_at > ?", Time.now - 10.hours ).order('start_at ASC').paginate(page: params[:page], :per_page => 2)
+    @events = []
+    @user  = User.find_by_permalink(params[:permalink])
+    list_of_events = Event.where( "start_at > ?", Time.now - 10.hours)
+    list_of_events.sort_by{|t| t.start_at}.each do |event|
+      if @user.id==event.usrid
+        @events << event
+      end  
+    end  
+    @events = @events.paginate(page: params[:page], :per_page => 6)
+    #@events = Event.where( "start_at > ?", Time.now - 10.hours ).order('start_at ASC').paginate(page: params[:page], :per_page => 6)
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @user }
